@@ -6,7 +6,6 @@ import { upload } from '../utilities/multerConfig'
 export const postFile: RequestHandler = async (req, res, next) => {
 
     let format = ".xlsx"
-    console.log(req.file)
 
     if (!req.file) {
         return res.json({ error: "File needs to be uploaded" })
@@ -17,22 +16,9 @@ export const postFile: RequestHandler = async (req, res, next) => {
     }
 
     req.file.originalname = "excel.xlxs"
-    console.log(req.file)
-    next({ file: req.file })
 
+    next();
 
-    console.log("Diretorio atual:", __dirname)
-
-    // Para obter o caminho absoluto do diretório onde o arquivo está sendo executado:
-    const currentDirectory = path.resolve(__dirname);
-    console.log('Caminho absoluto do diretório atual:', currentDirectory);
-
-    if(req.file){
-        next();
-    }
-    else {
-        return res.json({ error: "Finish" })
-    }
 }
 
 export const readFile: RequestHandler = async (req, res, next) => {
@@ -46,15 +32,40 @@ export const readFile: RequestHandler = async (req, res, next) => {
     const workbook = xlsx.readFile(`./uploads/${req.file.filename}`)
     let workbook_sheet = workbook.SheetNames;
 
-    let workbook_response = xlsx.utils.sheet_to_json(        
+    let workbook_response = xlsx.utils.sheet_to_json(
         workbook.Sheets[workbook_sheet[0]]
     );
 
-    return res.status(200).json({message: workbook_response})
+    // Função para formatar a data no formato desejado (ano-mês-dia hora:minuto:segundo)
+    const formatDate = (dateNumber: number) => {
+        const date = new Date((dateNumber - 25569) * 86400 * 1000); // Convertendo o número de dias para milissegundos
+        return date.toISOString().replace(/T/, ' ').replace(/\..+/, ''); // Formatando para o formato desejado
+    };
+
+    // Iterando sobre os dados e formatando as datas
+    const formattedData = workbook_response.map((row: any) => {
+        // Verificando se as chaves "Abierto" e "Actualizado" existem e são números
+        if (typeof row.Abierto === 'number') {
+            row.Abierto = formatDate(row.Abierto);
+        }
+        if (typeof row.Actualizado === 'number') {
+            row.Actualizado = formatDate(row.Actualizado);
+        }
+        return row;
+    });
+
+    return res.status(200).json({ message: formattedData });
+
+
+
+    //return res.status(200).json({message: workbook_response})
 
 }
 
-
+//console.log("Diretorio atual:", __dirname)
+// Para obter o caminho absoluto do diretório onde o arquivo está sendo executado:
+//const currentDirectory = path.resolve(__dirname);
+//console.log('Caminho absoluto do diretório atual:', currentDirectory);
 
 
 /* 
