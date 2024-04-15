@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import * as accents from 'remove-accents';
 import path from 'path'
 import xlsx from 'xlsx'
 import { upload } from '../utilities/multerConfig'
@@ -68,7 +69,8 @@ export const readFile: RequestHandler = async (req, res, next) => {
     const formattedData = workbook_response.map((row : any) => {
         const newRow: any = {};
         header.forEach(column => {
-            newRow[column.replace(/\s/g, '')] = row[column];
+            const formattedKey = accents.remove(column.replace(/\s/g, '').toLowerCase());
+            newRow[formattedKey] = row[column];
         });
         return newRow;
     });
