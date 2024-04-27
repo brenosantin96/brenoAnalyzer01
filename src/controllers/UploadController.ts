@@ -52,6 +52,32 @@ export const readFile: RequestHandler = async (req, res, next) => {
         return date.toISOString().replace(/T/, ' ').replace(/\..+/, ''); // Formatando para o formato desejado
     };
 
+
+    let teste = workbook_response.find((row: any) => typeof row.Abierto === 'number')
+    console.log(teste)
+
+ 
+    let tableWithAllColumns = workbook_response.find((row: any) =>
+        row.Abierto &&
+        row.Actualizado &&
+        row["Asignado a"] &&
+        row["Número"] &&
+        row.Etiquetas &&
+        row["Motivo para poner en espera"] ||
+        row["Razón Pendiente"]
+        )
+
+    if (!tableWithAllColumns) {
+        console.log("if !tableWithAllColumns ", tableWithAllColumns)
+        return res.json({ err: "You should import a .xls file that has the columns: 'asignado a', 'abierto', 'actualizado', 'etiquetas', 'numero', 'motivo para poner en espera' " })
+    }
+
+    if (tableWithAllColumns) {
+        console.log("if tableWithAllColumns ", tableWithAllColumns)
+        console.log(tableWithAllColumns)
+    }
+
+
     // Iterando sobre os dados e formatando as datas
     workbook_response = workbook_response.map((row: any) => {
         // Verificando se as chaves "Abierto" e "Actualizado" existem e são números
@@ -66,7 +92,7 @@ export const readFile: RequestHandler = async (req, res, next) => {
 
 
     // Removendo espaços em branco dos nomes das colunas
-    const formattedData = workbook_response.map((row : any) => {
+    const formattedData = workbook_response.map((row: any) => {
         const newRow: any = {};
         header.forEach(column => {
             const formattedKey = accents.remove(column.replace(/\s/g, '').toLowerCase());
