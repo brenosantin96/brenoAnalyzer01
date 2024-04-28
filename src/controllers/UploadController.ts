@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
 import * as accents from 'remove-accents';
-import path from 'path'
 import xlsx from 'xlsx'
 import { upload } from '../utilities/multerConfig'
 
