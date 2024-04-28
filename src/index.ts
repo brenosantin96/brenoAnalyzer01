@@ -16,6 +16,7 @@ const upload = multer({
     dest: './uploads'
 })
 
+
 app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
@@ -46,6 +47,7 @@ if (process.env.NODE_ENV === 'production') {
     const secServer = https.createServer(options, app);
     runServer(80, regularServer);
     runServer(443, secServer)
+    
 } else {
     const serverPort: number = process.env.PORT ? parseInt(process.env.PORT) : 9000
     runServer(serverPort, regularServer)
