@@ -20,7 +20,7 @@ model user {
   password String
   isAdmin Boolean
 
-  @@map("user")
+  @@map("users")
 
 }
 
