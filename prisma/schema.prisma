@@ -13,11 +13,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model user {
   id      Int     @id @default(autoincrement())
   email   String  @unique
   name    String
   password String
   isAdmin Boolean
+
+  @@map("user")
+
 }
 
