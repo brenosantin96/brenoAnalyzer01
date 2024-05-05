@@ -52,10 +52,7 @@ export const readFile: RequestHandler = async (req, res, next) => {
     };
 
 
-    let teste = workbook_response.find((row: any) => typeof row.Abierto === 'number')
-    console.log(teste)
-
- 
+    //criterios para ser considerado um excel de incidencias
     let tableWithAllColumns = workbook_response.find((row: any) =>
         row.Abierto &&
         row.Actualizado &&
@@ -64,18 +61,52 @@ export const readFile: RequestHandler = async (req, res, next) => {
         row.Etiquetas &&
         row["Motivo para poner en espera"] ||
         row["Razón Pendiente"]
+    )
+
+    //entra nesse if se for um .xls de CHATs importado
+    if (!tableWithAllColumns) {
+
+        let chatIncidentsTable = workbook_response.find((row: any) =>
+            row.Creado &&
+            row.Tarea &&
+            row["Asignado a"] &&
+            row["Porcentaje de negocio trascurrido"]
         )
 
-    if (!tableWithAllColumns) {
-        console.log("if !tableWithAllColumns ", tableWithAllColumns)
-        return res.json({ err: "You should import a .xls file that has the columns: 'asignado a', 'abierto', 'actualizado', 'etiquetas', 'numero', 'motivo para poner en espera' " })
-    }
+        if (!chatIncidentsTable) {
+            return res.json({ err: "For incidents, you should import a .xls file that has the columns: 'asignado a', 'abierto', 'actualizado', 'etiquetas', 'numero', 'motivo para poner en espera'. For chats, you should import a ..xls file that has the columns: 'Tarea', 'Asignado a', 'Porcentaje de negocio trascurrido'" })
+        }
 
-    if (tableWithAllColumns) {
-        console.log("if tableWithAllColumns ", tableWithAllColumns)
-        console.log(tableWithAllColumns)
-    }
+        //will only enter here if have columns of chat.
+        if (chatIncidentsTable) {
 
+
+            // Iterando sobre os dados e formatando as datas
+            workbook_response = workbook_response.map((row: any) => {
+                // Verificando se as chaves "Creado" existem e são números
+                if (typeof row.Creado === 'number') {
+                    row.Creado = formatDate(row.Creado);
+                }
+                return row;
+            });
+
+
+            // Removendo espaços em branco dos nomes das colunas
+            const formattedData = workbook_response.map((row: any) => {
+                const newRow: any = {};
+                header.forEach(column => {
+                    const formattedKey = accents.remove(column.replace(/\s/g, '').toLowerCase());
+                    newRow[formattedKey] = row[column];
+                });
+                return newRow;
+            });
+
+            return res.status(200).json({ message: formattedData });
+
+
+        }
+
+    }
 
     // Iterando sobre os dados e formatando as datas
     workbook_response = workbook_response.map((row: any) => {
@@ -107,3 +138,6 @@ export const readFile: RequestHandler = async (req, res, next) => {
     //return res.status(200).json({message: workbook_response})
 
 }
+
+
+//const removeBlankSpaces = ()
