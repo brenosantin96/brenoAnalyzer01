@@ -40,13 +40,18 @@ export const login = async (req: Request, res: Response) => {
     }
 
     if (user) {
+
         const token = JWT.sign({ id: user.id, email: user.email, password: user.password },
             process.env.JWT_SECRET_KEY as string,
             {
                 expiresIn: '2h'
             });
 
-        res.json({ msg: "Logged in successfully", status: true, token });
+            
+        // Remover a senha do objeto usuário
+        const { id, password, ...userWithoutPassword } = user;
+
+        res.json({ msg: "Logged in successfully", status: true, token, user : userWithoutPassword });
         return;
     }
 
