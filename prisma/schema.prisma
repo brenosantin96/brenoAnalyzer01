@@ -13,14 +13,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id      Int     @id @default(autoincrement())
-  email   String  @unique
-  name    String
-  password String
-  isAdmin Boolean
+model User {
+  id           Int                 @id @default(autoincrement())
+  email        String              @unique
+  name         String
+  password     String
+  isAdmin      Boolean
+  createdTexts Inc_vs_ritm_texts[] @relation("CreatedBy")
+  editedTexts  Inc_vs_ritm_texts[] @relation("EditedBy")
 
   @@map("users")
-
 }
 
+model Inc_vs_ritm_texts {
+  id              Int      @id @default(autoincrement())
+  platform        String?
+  casuistry       String?
+  type_spanish    String?
+  type_english    String?
+  shortcut        String?
+  kb_article      String?
+  created_by      User     @relation("CreatedBy", fields: [createdById], references: [id])
+  last_edition_by User     @relation("EditedBy", fields: [lastEditedById], references: [id])
+  created_at      DateTime @default(now())
+  last_edited_at  DateTime @default(now())
+  createdById     Int
+  lastEditedById  Int
+}
