@@ -4,7 +4,6 @@ import prisma from '../libs/prismaClient';
 import { connect } from 'http2';
 
 
-
 export const getIncVsRitmTexts = async (req: Request, res: Response) => {
 
     let allIncVsRitmTexts = await prisma.inc_vs_ritm_texts.findMany();
@@ -33,15 +32,10 @@ export const createIncVsRitmText = async (req: Request, res: Response) => {
         kb_article: z.string().nullable(),   // Aceita string ou null
         created_by: z.number(),              // Deve ser um número (ID do usuário)
         last_edition_by: z.number(),         // Deve ser um número (ID do usuário)
-        created_at: z.string().datetime(),   // Deve ser uma string de data (ISO 8601)
-        last_edited_at: z.string().datetime() // Deve ser uma string de data (ISO 8601)
     });
-
-    const { platform, casuistry, type_spanish, type_english, shortcut, kb_article, created_by, last_edition_by, created_at, last_edited_at } = req.body;
 
 
     try {
-
 
         // Validando os dados recebidos com Zod
         const validatedData = IncVsRitmTextSchema.parse(req.body);
@@ -55,8 +49,8 @@ export const createIncVsRitmText = async (req: Request, res: Response) => {
                 type_english: validatedData.type_english,
                 shortcut: validatedData.shortcut,
                 kb_article: validatedData.kb_article,
-                created_at: validatedData.created_at,
-                last_edited_at: validatedData.last_edited_at,
+                created_at: new Date(),
+                last_edited_at: new Date(),
                 created_by: {
                     connect: { id: validatedData.created_by }
                 },
