@@ -18,7 +18,7 @@ router.post('/api/upload', upload.single('excel'), UploadController.postFile, Up
 router.get('/api/readupload', UploadController.readFile)
 
 //IncVsRitmText routes
-router.get("/api/inc_vs_ritm_texts", IncVsRitmController.getIncVsRitmTexts);
+router.get("/api/inc_vs_ritm_texts", Auth.private, IncVsRitmController.getIncVsRitmTexts);
 router.get("/api/inc_vs_ritm_texts/:id", IncVsRitmController.getOneIncVsRitmText);
 router.post("/api/inc_vs_ritm_texts", Auth.private, IncVsRitmController.createIncVsRitmText);
 router.put("/api/inc_vs_ritm_texts/:id", Auth.private, IncVsRitmController.updateIncVsRitmText);
