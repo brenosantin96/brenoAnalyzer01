@@ -1,10 +1,22 @@
 import { Request, Response } from 'express';
 import prisma from '../libs/prismaClient';
-
+import { JwtPayload } from 'jsonwebtoken';
 
 
 export const ping = async (req: Request, res: Response) => {
     res.json({ res: 'pong' });
+}
+
+export const getUserLogged = async (req: Request, res: Response) => {
+
+    const user = req.user;
+    const {id, email} = user as JwtPayload;
+
+    const userInfo = {id, email}
+
+    res.status(200).json({ userInfo })
+    return
+
 }
 
 

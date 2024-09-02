@@ -26,7 +26,7 @@ model User {
 }
 
 model Inc_vs_ritm_texts {
-  id              Int      @id @default(autoincrement())
+  id              String      @id 
   platform        String?
   casuistry       String?
   type_spanish    String?

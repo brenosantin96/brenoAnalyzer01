@@ -2,11 +2,13 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../libs/prismaClient';
 import { connect } from 'http2';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 export const getIncVsRitmTexts = async (req: Request, res: Response) => {
 
-    let allIncVsRitmTexts = await prisma.inc_vs_ritm_texts.findMany();
+    let allIncVsRitmTexts = await prisma.inc_vs_ritm_texts.findMany({orderBy: {created_at : 'asc'}});
 
     if (allIncVsRitmTexts) {
         res.status(200).json(allIncVsRitmTexts);
@@ -27,7 +29,7 @@ export const getOneIncVsRitmText = async (req: Request, res: Response) => {
         const { id } = req.params;
 
         let oneIncVsRitmTexts = await prisma.inc_vs_ritm_texts.findFirst({
-            where: { id: parseInt(id) }
+            where: { id: id }
         })
 
         if (oneIncVsRitmTexts) {
@@ -69,6 +71,7 @@ export const createIncVsRitmText = async (req: Request, res: Response) => {
         // Criando o novo registro com os dados validados
         const newIncVsRitmText = await prisma.inc_vs_ritm_texts.create({
             data: {
+                id: uuidv4(),
                 platform: validatedData.platform,
                 casuistry: validatedData.casuistry,
                 type_spanish: validatedData.type_spanish,
@@ -125,7 +128,7 @@ export const updateIncVsRitmText = async (req: Request, res: Response) => {
         const validatedData = IncVsRitmTextSchema.parse(req.body);
 
         const updatedIncVsRitmText = await prisma.inc_vs_ritm_texts.update({
-            where: { id: parseInt(id) },
+            where: { id: id },
             data: {
                 platform: validatedData.platform,
                 casuistry: validatedData.casuistry,
@@ -167,7 +170,7 @@ export const deleteIncVsRitmText = async (req: Request, res: Response) => {
         const { id } = req.params;
 
         let deletedIncVsRitmTexts = await prisma.inc_vs_ritm_texts.delete({
-            where: { id: parseInt(id) }
+            where: { id: id }
         })
 
         if (deletedIncVsRitmTexts) {

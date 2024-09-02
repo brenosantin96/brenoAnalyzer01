@@ -11,6 +11,9 @@ import { upload } from '../utilities/multerConfig';
 
 const router = Router();
 
+//auth
+router.get('/api/getuserlogged', Auth.private, LoginAndRegister.getUserLogged);
+
 router.get('/api/ping', TestController.ping);
 router.post('/api/register', LoginAndRegister.createUser);
 router.post('/api/login', LoginController.login);
@@ -28,6 +31,8 @@ router.delete("/api/inc_vs_ritm_texts/:id", Auth.private, IncVsRitmController.de
 
 
 export default router;
+
+
 
 
 

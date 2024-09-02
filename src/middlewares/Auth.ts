@@ -2,11 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import JWT from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import prisma from '../libs/prismaClient';
+// No início do arquivo Auth.ts
+import { JwtPayload } from 'jsonwebtoken';
+
+declare module 'express-serve-static-core' {
+    interface Request {
+        user?: JwtPayload | string;
+    }
+}
 
 
 dotenv.config();
 
-interface JwtPayload {
+interface JwtPayloadz {
     id: string
 }
 
@@ -23,6 +31,11 @@ export const Auth = {
                 try {
                     const decoded = JWT.verify(token, process.env.JWT_SECRET_KEY as string);
                     console.log("Decoded: ", decoded);
+
+                    // Armazene as informações do usuário na requisição
+                    req.user = decoded;
+
+
                     success = true;
                 } catch (error) {
                     console.log("An error has ocurred:", error);
@@ -46,7 +59,7 @@ export const Auth = {
             const [authType, token] = req.headers.authorization.split(' ');
             if (authType === 'Bearer') {
                 try {
-                    const decoded = JWT.verify(token, process.env.JWT_SECRET_KEY as string) as JwtPayload;
+                    const decoded = JWT.verify(token, process.env.JWT_SECRET_KEY as string) as JwtPayloadz;
                     console.log("Decoded: ", decoded);
 
                     const userAdmin = await prisma.user.findUnique({ where: { id: parseInt(decoded.id) } });
