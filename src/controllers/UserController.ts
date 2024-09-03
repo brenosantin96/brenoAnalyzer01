@@ -9,12 +9,14 @@ export const ping = async (req: Request, res: Response) => {
 
 export const getUserLogged = async (req: Request, res: Response) => {
 
-    const user = req.user;
-    const {id, email} = user as JwtPayload;
+    const userJWT = req.user;
+    const {id, email} = userJWT as JwtPayload;
 
-    const userInfo = {id, email}
+    const userInfo = await prisma.user.findFirst({where: {id}})
+    const user = {...userInfo, password: "NOT AVAILABLE"}
+    
 
-    res.status(200).json({ userInfo })
+    res.status(200).json({ user })
     return
 
 }

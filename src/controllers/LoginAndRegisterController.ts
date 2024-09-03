@@ -47,11 +47,19 @@ export const login = async (req: Request, res: Response) => {
                 expiresIn: '2h'
             });
 
-            
-        // Remover a senha do objeto usuário
-        const { id, password, ...userWithoutPassword } = user;
+        // Define o cookie HTTP-only
+        res.cookie('token', token, {
+            httpOnly: true,  // Não permite acesso via JavaScript
+            maxAge: 2 * 60 * 60 * 1000, // 2 horas
+            sameSite: 'strict', // Protege contra ataques CSRF
+            path: '/' // Define o cookie disponível para todas as rotas
+        });
 
-        res.json({ msg: "Logged in successfully", status: true, token, user : userWithoutPassword });
+
+        // Remover a senha do objeto usuário
+        const { password, ...userWithoutPassword } = user;
+
+        res.json({ msg: "Logged in successfully", status: true, token, user: userWithoutPassword });
         return;
     }
 
