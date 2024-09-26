@@ -47,6 +47,34 @@ export const getOneIncVsRitmText = async (req: Request, res: Response) => {
 
 }
 
+export const getOneIncVsRitmTextByShortcut = async (req: Request, res: Response) => {
+
+    console.log("OLA!!!")
+    console.log(req.params)
+
+    try {
+        const { shortcut } = req.params;
+        console.log("shortcut", shortcut);
+
+        let oneIncVsRitmTexts = await prisma.inc_vs_ritm_texts.findFirst({
+            where: { shortcut: shortcut }
+        })
+
+        if (oneIncVsRitmTexts) {
+            res.status(200).json(oneIncVsRitmTexts);
+            return;
+        } else {
+            return res.status(400).json({error: "Text not found"})
+        }
+    }
+
+    catch (error: any) {
+        console.log("ERROR: ", error);
+        res.status(500).json({ error: "Error finding text", msg: error });
+    }
+
+}
+
 
 export const createIncVsRitmText = async (req: Request, res: Response) => {
 
