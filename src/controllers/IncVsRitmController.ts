@@ -49,8 +49,6 @@ export const getOneIncVsRitmText = async (req: Request, res: Response) => {
 
 export const getOneIncVsRitmTextByShortcut = async (req: Request, res: Response) => {
 
-    console.log("OLA!!!")
-    console.log(req.params)
 
     try {
         const { shortcut } = req.params;
@@ -84,7 +82,7 @@ export const createIncVsRitmText = async (req: Request, res: Response) => {
         casuistry: z.string().nullable(),    // Aceita string ou null
         type_spanish: z.string().nullable(), // Aceita string ou null
         type_english: z.string().nullable(), // Aceita string ou null
-        shortcut: z.string().nullable(),     // Aceita string ou null
+        shortcut: z.string(),     // Aceita string ou null
         kb_article: z.string().nullable(),   // Aceita string ou null
         created_by: z.number(),              // Deve ser um número (ID do usuário)
         last_edition_by: z.number(),         // Deve ser um número (ID do usuário)
@@ -96,6 +94,11 @@ export const createIncVsRitmText = async (req: Request, res: Response) => {
         // Validando os dados recebidos com Zod
         const validatedData = IncVsRitmTextSchema.parse(req.body);
 
+        let allTexts = await prisma.inc_vs_ritm_texts.count() + 1;
+        //Aqui eu quero pegar a quantidade de textos que possuo no banco de
+        console.log(allTexts);
+        
+
         // Criando o novo registro com os dados validados
         const newIncVsRitmText = await prisma.inc_vs_ritm_texts.create({
             data: {
@@ -104,7 +107,7 @@ export const createIncVsRitmText = async (req: Request, res: Response) => {
                 casuistry: validatedData.casuistry,
                 type_spanish: validatedData.type_spanish,
                 type_english: validatedData.type_english,
-                shortcut: validatedData.shortcut,
+                shortcut: `Shortcut${allTexts}`,
                 kb_article: validatedData.kb_article,
                 created_at: new Date(),
                 last_edited_at: new Date(),

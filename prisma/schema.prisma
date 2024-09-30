@@ -31,7 +31,7 @@ model Inc_vs_ritm_texts {
   casuistry       String?
   type_spanish    String?
   type_english    String?
-  shortcut        String?
+  shortcut        String? @unique
   kb_article      String?
   created_by      User     @relation("CreatedBy", fields: [createdById], references: [id])
   last_edition_by User     @relation("EditedBy", fields: [lastEditedById], references: [id])
