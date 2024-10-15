@@ -28,9 +28,9 @@ model User {
 model Inc_vs_ritm_texts {
   id              String   @id
   platform        String?
-  casuistry       String?
-  type_spanish    String?
-  type_english    String?
+  casuistry       String? @db.Text
+  type_spanish    String? @db.MediumText
+  type_english    String? @db.MediumText
   shortcut        String? @unique
   kb_article      String?
   created_by      User     @relation("CreatedBy", fields: [createdById], references: [id])
