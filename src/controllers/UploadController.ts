@@ -55,12 +55,11 @@ export const readFile: RequestHandler = async (req, res, next) => {
     //criterios para ser considerado um excel de incidencias
     let tableWithAllColumns = workbook_response.find((row: any) =>
         row.Abierto &&
-        row.Actualizado &&
+        row["Actualizado"] || row["Actualizados"] &&
         row["Asignado a"] &&
         row["Número"] &&
         row.Etiquetas &&
-        row["Motivo para poner en espera"] ||
-        row["Razón Pendiente"]
+        row["Motivo para poner en espera"] || row["Razón Pendiente"]
     )
 
     //entra nesse if se for um .xls de CHATs importado
@@ -116,6 +115,9 @@ export const readFile: RequestHandler = async (req, res, next) => {
         }
         if (typeof row.Actualizado === 'number') {
             row.Actualizado = formatDate(row.Actualizado);
+        }
+        if (typeof row["Actualizados"] === 'number') {
+            row["Actualizados"] = formatDate(row["Actualizados"]);
         }
         return row;
     });
